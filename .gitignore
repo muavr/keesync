@@ -1,0 +1,8 @@
+.env
+*.py[cod]
+*.log.[0-9]*
+.meta
+.token
+venv/
+.idea/
+__pycache__/
