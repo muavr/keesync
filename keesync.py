@@ -9,6 +9,7 @@ import typing
 import logging
 import hashlib
 import dropbox
+import argparse
 
 from dropbox import files as dbx_files
 from dropbox.files import FileMetadata
@@ -238,23 +239,40 @@ class Application:
         return re.compile(name + r'.*conflicted copy\)' + extension)
 
 
-if __name__ == '__main__':
-    APP_KEY = os.environ.get('APP_KEY', '')
+def parse_args():
+    arg_parser = argparse.ArgumentParser(prog='keesync', description='Synchronize keepass database through dropbox.')
+    arg_parser.add_argument('-d', '--db', help='path to keepass database')
+    arg_parser.add_argument('-i', '--interval',  default=1, type=int, help='time interval in seconds before'
+                                                                           ' the next iteration of synchronization')
+    args = arg_parser.parse_args()
 
-    SLEEP_TIMEOUT = 1
+    if not os.path.exists(os.path.dirname(args.db) or './'):
+        print('File "{}" does not exist.'.format(args.db))
+        return
 
-    if len(sys.argv) > 1:
-        db_path = sys.argv[1]
-    else:
-        logger.warning('Few arguments were passed.')
-        exit(1)
+    if not args.interval > 0:
+        print('Interval must be greater than 0.')
+        return
+
+    return args
+
+
+def main():
+    app_key = os.environ.get('APP_KEY', '')
+    args = parse_args()
+    if not args:
+        return
 
     try:
-        with Application(APP_KEY, db_path) as app:
+        with Application(app_key, args.db) as app:
             while True:
                 app.sync()
-                time.sleep(SLEEP_TIMEOUT)
+                time.sleep(args.interval)
     except KeyboardInterrupt:
         logger.info('Exit app.')
     except Exception:
         logger.exception('Undefined err occurred.')
+
+
+if __name__ == '__main__':
+    main()
