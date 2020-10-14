@@ -3,7 +3,6 @@
 import os
 import re
 import json
-import sys
 import time
 import typing
 import logging
