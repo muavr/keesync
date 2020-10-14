@@ -17,16 +17,11 @@ from dropbox import DropboxOAuth2FlowNoRedirect
 
 from datetime import datetime
 
-log_level = logging.DEBUG
+
 logger = logging.getLogger(__name__)
-logger.setLevel(log_level)
-
 handler = logging.StreamHandler()
-handler.setLevel(log_level)
-
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
-
 logger.addHandler(handler)
 
 
@@ -241,8 +236,10 @@ class Application:
 def parse_args():
     arg_parser = argparse.ArgumentParser(prog='keesync', description='Synchronize keepass database through dropbox.')
     arg_parser.add_argument('-d', '--db', help='path to keepass database')
-    arg_parser.add_argument('-i', '--interval',  default=1, type=int, help='time interval in seconds before'
-                                                                           ' the next iteration of synchronization')
+    arg_parser.add_argument('-i', '--interval', default=1, type=int, help='time interval in seconds before'
+                                                                          ' the next iteration of synchronization')
+    arg_parser.add_argument('-l', '--level', default='info',
+                            choices=['debug', 'info', 'warning', 'error', 'critical'], help='logging level')
     args = arg_parser.parse_args()
 
     if not os.path.exists(os.path.dirname(args.db) or './'):
@@ -256,11 +253,24 @@ def parse_args():
     return args
 
 
+def set_log_level(log_name, level: str):
+    levels = {
+        'critical': logging.CRITICAL,
+        'error': logging.ERROR,
+        'warning': logging.WARNING,
+        'info': logging.INFO,
+        'debug': logging.DEBUG}
+    logger_instance = logging.getLogger(log_name)
+    logger_instance.setLevel(levels[level])
+
+
 def main():
     app_key = os.environ.get('APP_KEY', '')
     args = parse_args()
     if not args:
         return
+
+    set_log_level(__name__, args.level)
 
     try:
         with Application(app_key, args.db) as app:

@@ -1,0 +1,13 @@
+[Unit]
+Description=keesync
+After=network.target
+
+[Service]
+User=am
+Group=am
+WorkingDirectory={HOME}/keesync/
+ExecStart={PYTHON_PATH} /usr/bin/keesync.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
