@@ -17,6 +17,7 @@ from dropbox import DropboxOAuth2FlowNoRedirect
 
 from datetime import datetime
 
+VERSION = '0.1'
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -235,6 +236,7 @@ class Application:
 
 def parse_args():
     arg_parser = argparse.ArgumentParser(prog='keesync', description='Synchronize keepass database through dropbox.')
+    arg_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + VERSION)
     arg_parser.add_argument('-d', '--db', help='path to keepass database')
     arg_parser.add_argument('-i', '--interval', default=1, type=int, help='time interval in seconds before'
                                                                           ' the next iteration of synchronization')

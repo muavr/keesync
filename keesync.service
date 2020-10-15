@@ -1,10 +1,10 @@
 [Unit]
-Description=keesync
+Description=keesync - keepassx db synchronization
 After=network.target
 
 [Service]
-User=am
-Group=am
+User={USER}
+Group={USER}
 WorkingDirectory={HOME}/keesync/
 ExecStart={PYTHON_PATH} /usr/bin/keesync.py
 Restart=on-failure
