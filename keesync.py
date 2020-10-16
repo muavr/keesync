@@ -237,18 +237,20 @@ class Application:
 def parse_args():
     arg_parser = argparse.ArgumentParser(prog='keesync', description='Synchronize keepass database through dropbox.')
     arg_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + VERSION)
-    arg_parser.add_argument('-d', '--db', help='path to keepass database')
-    arg_parser.add_argument('-i', '--interval', default=1, type=int, help='time interval in seconds before'
-                                                                          ' the next iteration of synchronization')
-    arg_parser.add_argument('-l', '--level', default='info',
+    arg_parser.add_argument('-a', '--app', required=True,  help='application key')
+    arg_parser.add_argument('-p', '--path', required=True, help='path to keepass database')
+    arg_parser.add_argument('-s', '--sleep', default=1, type=int, help='time interval in seconds before '
+                                                                       'he next iteration of synchronization')
+    arg_parser.add_argument('-l', '--log', default='info',
                             choices=['debug', 'info', 'warning', 'error', 'critical'], help='logging level')
+    arg_parser.add_argument('-i', '--init', action='store_true', help='initialize application - generate refresh token')
     args = arg_parser.parse_args()
 
-    if not os.path.exists(os.path.dirname(args.db) or './'):
-        print('File "{}" does not exist.'.format(args.db))
+    if not os.path.exists(os.path.dirname(args.path) or './'):
+        print('File "{}" does not exist.'.format(args.path))
         return
 
-    if not args.interval > 0:
+    if not args.sleep > 0:
         print('Interval must be greater than 0.')
         return
 
@@ -267,7 +269,6 @@ def set_log_level(log_name, level: str):
 
 
 def main():
-    app_key = os.environ.get('APP_KEY', '')
     args = parse_args()
     if not args:
         return
@@ -275,10 +276,10 @@ def main():
     set_log_level(__name__, args.level)
 
     try:
-        with Application(app_key, args.db) as app:
-            while True:
+        with Application(args.app_key, args.path) as app:
+            while not args.init:
                 app.sync()
-                time.sleep(args.interval)
+                time.sleep(args.sleep)
     except KeyboardInterrupt:
         logger.info('Exit app.')
     except Exception:
