@@ -237,7 +237,7 @@ class Application:
 def parse_args():
     arg_parser = argparse.ArgumentParser(prog='keesync', description='Synchronize keepass database through dropbox.')
     arg_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + VERSION)
-    arg_parser.add_argument('-a', '--app', required=True,  help='application key')
+    arg_parser.add_argument('-a', '--app', default='',  help='application key')
     arg_parser.add_argument('-p', '--path', required=True, help='path to keepass database')
     arg_parser.add_argument('-s', '--sleep', default=1, type=int, help='time interval in seconds before '
                                                                        'he next iteration of synchronization')
@@ -268,15 +268,22 @@ def set_log_level(log_name, level: str):
     logger_instance.setLevel(levels[level])
 
 
+def read_app_key_from_env() -> str:
+    return os.environ.get('KEESYNC_APP_KEY', '')
+
 def main():
     args = parse_args()
     if not args:
         return
 
-    set_log_level(__name__, args.level)
+    set_log_level(__name__, args.log)
+    app_key = args.app if args.app else read_app_key_from_env()
+    if not app_key:
+        logger.warning('Application key is required')
+        exit(0)
 
     try:
-        with Application(args.app_key, args.path) as app:
+        with Application(app_key, args.path) as app:
             while not args.init:
                 app.sync()
                 time.sleep(args.sleep)
