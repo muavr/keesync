@@ -6,7 +6,8 @@ After=network.target
 User={USER}
 Group={USER}
 WorkingDirectory={WORKING_DIRECTORY}
-ExecStart={PYTHON_PATH} {WORKING_DIRECTORY}/keesync.py -a {APP_KEY} -p {DATABASE_PATH} -l debug -s 1
+Environment="KEESYNC_APP_KEY={APP_KEY}"
+ExecStart={PYTHON_PATH} {WORKING_DIRECTORY}/keesync.py -p {DATABASE_PATH} -l info -s 1
 Restart=on-failure
 
 [Install]
