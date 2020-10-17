@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User={USER}
 Group={USER}
-WorkingDirectory={HOME}/keesync/
-ExecStart={PYTHON_PATH} /usr/bin/keesync.py
+WorkingDirectory={WORKING_DIRECTORY}
+ExecStart={PYTHON_PATH} {WORKING_DIRECTORY}/keesync.py -a {APP_KEY} -p {DATABASE_PATH} -l debug -s 1
 Restart=on-failure
 
 [Install]
