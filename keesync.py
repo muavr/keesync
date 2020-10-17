@@ -9,6 +9,7 @@ import logging
 import hashlib
 import dropbox
 import argparse
+import requests
 
 from dropbox import files as dbx_files
 from dropbox.files import FileMetadata
@@ -284,8 +285,13 @@ def main():
 
     try:
         with Application(app_key, args.path) as app:
-            while not args.init:
-                app.sync()
+            if args.init:
+                return
+            while True:
+                try:
+                    app.sync()
+                except requests.exceptions.HTTPError as err:
+                    logger.warning('HTTP error occurred {}'.format(err))
                 time.sleep(args.sleep)
     except KeyboardInterrupt:
         logger.info('Exit app.')
