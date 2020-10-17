@@ -273,10 +273,10 @@ def main():
     if not args:
         return
 
-    set_log_level(__name__, args.level)
+    set_log_level(__name__, args.log)
 
     try:
-        with Application(args.app_key, args.path) as app:
+        with Application(args.app, args.path) as app:
             while not args.init:
                 app.sync()
                 time.sleep(args.sleep)
