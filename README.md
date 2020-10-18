@@ -26,10 +26,10 @@ During installation you will be requested
 - path to your database
 - authorization code
 
-To get authorization code you have to go authorization url that will be created during installation process
+To get authorization code you have to go authorization url that will be created during installation process.
 
-In result the application will be installed in ~/.keesync directory in your $HOME
-It will create virtual environment in ~/.keesync
+In result the application will be installed in ~/.keesync directory in your $HOME.
+It will create virtual environment in ~/.keesync.
 During installation the application gets refresh token that uses to get short living access token.
 The app creats service unit on /etc/systemd/system/keesync.service.
 
