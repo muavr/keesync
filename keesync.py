@@ -290,7 +290,7 @@ def main():
             while True:
                 try:
                     app.sync()
-                except requests.exceptions.HTTPError as err:
+                except requests.exceptions.RequestException as err:
                     logger.warning('HTTP error occurred {}'.format(err))
                 time.sleep(args.sleep)
     except KeyboardInterrupt:
